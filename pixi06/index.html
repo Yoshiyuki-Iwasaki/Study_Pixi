@@ -1,0 +1,46 @@
+<html>
+
+<head>
+	<title>pixi.js example 15 - Filters</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.1/pixi.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/pixi-filters@latest/dist/pixi-filters.js"></script>
+</head>
+
+<body>
+	<canvas width="800" height="600" style="touch-action: none; cursor: inherit;"></canvas>
+	<script>
+		// applicationを用意します
+		// 今回は画像サイズにあわせてます
+		const app = new PIXI.Application({
+			width: 600,
+			height: 546
+		});
+
+		// DOMにPixi用のcanvasタグを追加
+		document.body.appendChild(app.view);
+
+		// 画像を読み込んでロードを待つよ
+		PIXI.loader.add('image', 'image.jpg').load((loader, resources) => {
+			// ロード終わったらここの処理走るよ
+
+			// 作った画像をstageに追加するよ
+			const image = new PIXI.Sprite(resources.image.texture);
+			app.stage.addChild(image);
+
+			// ブラーフィルター作成
+			let filter = new PIXI.filters.BlurFilter();
+
+			// 画像にフィルターをかけるよ
+			// 複数かけれるので、1個でも配列で渡す必要あり
+			image.filters = [filter];
+		});
+	</script>
+
+	<style>
+		canvas {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
