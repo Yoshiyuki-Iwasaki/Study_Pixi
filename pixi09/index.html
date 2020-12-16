@@ -1,0 +1,50 @@
+<html>
+
+<head>
+	<title>pixi.js example 15 - Filters</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.1/pixi.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/pixi-filters@latest/dist/pixi-filters.js"></script>
+</head>
+
+<body>
+	<canvas></canvas>
+	<script>
+		var WW = document.documentElement.clientWidth;
+		var WH = document.documentElement.clientHeight;
+
+		var renderer = PIXI.autoDetectRenderer(WW, WH,{backgroundColor : 0x000000});
+			renderer.view.style.position = "absolute"
+			renderer.view.style.width = window.innerWidth + "px";
+			renderer.view.style.height = window.innerHeight + "px";
+			renderer.view.style.display = "block";
+
+		document.body.appendChild(renderer.view);
+
+		var stage = new PIXI.Container();
+		var texture = PIXI.Texture.fromImage("image02.png");
+		var sprite1 = new PIXI.Sprite(texture);
+		stage.addChild(sprite1);
+
+		//- ここでフィルターを呼ぶ
+		var twistFilter = new PIXI.filters.TwistFilter();
+		stage.filters = [ twistFilter ];
+
+		// var displacementFilter = new PIXI.filters.DisplacementFilter(PIXI.Sprite.fromImage("displacement_map.jpg"));
+		// displacementFilter.scale.x = 70;
+		// displacementFilter.scale.y = 70;
+
+		render();
+		function render() {
+			requestAnimationFrame(render);
+			renderer.render(stage);
+		}
+	</script>
+
+	<style>
+		canvas {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>

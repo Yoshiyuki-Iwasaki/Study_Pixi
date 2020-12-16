@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=">
+  <title></title>
+</head>
+<body>
+
+  <canvas id ="canvas"></canvas>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.1/pixi.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/pixi-filters@latest/dist/pixi-filters.js"></script>
+
+  <script>
+	  const canvas = document.querySelector('canvas');
+
+
+const fromImg = "image.jpg"
+
+
+//アプリケーションを作成
+const app = new PIXI.Application({
+    view: canvas,
+    width: window.innerWidth, //canvas横幅
+    height: window.innerHeight,  //canvas縦幅
+    // backgroundColor: 0X000000, //背景色
+    // autoResize: true,//リサイズ処理
+});
+//画像の読み込み
+const texture = PIXI.Texture.fromImage(fromImg);
+//読み込んだ画像からスプライト(画像)を生成
+const img = new PIXI.Sprite(texture);
+
+// //スプライトの位置を設定する
+img.x = app.screen.width / 2;
+img.y = app.screen.height / 2;
+//アンカーポイントを中央に設定する
+img.anchor.x = 0.5;
+img.anchor.y = 0.5;
+// img.anchor.set(0.5);//アンカーポイントのx,yを中央に設定する
+//スプライトの大きさを調整する
+img.scale.x = 0.5;
+img.scale.y = 0.5;
+
+//画像をステージに追加
+app.stage.addChild(img);
+
+const noiseFilter = new PIXI.filters.NoiseFilter(); //ノイズフィルター
+noiseFilter.noise = 0.5; //ノイズの大きさ
+noiseFilter.seed = 0.5; //ノイズのランダム度合い
+
+img.filters = [noiseFilter]; //imgにフィルタを追加
+
+//imgのインタラクションをオン
+img.interactive = true;
+
+
+app.ticker.add(animate);
+function animate() {
+  noiseFilter.seed += 0.002;
+} 
+  </script>
+  
+</body>
+</html>
