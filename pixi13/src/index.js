@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js";
-import { TimelineMax } from "gsap";
+import { TimelineMax, Power3 } from "gsap";
 import $ from "jquery";
 
 import image01 from "./img/1.jpg";
-import image02 from "./img/2.jpg";
+import image02 from "./img/4.jpg";
 
 let width = $(window).width();
 let height = $(window).height();
@@ -11,66 +11,85 @@ let height = $(window).height();
 var renderer = PIXI.autoDetectRenderer(width, height, { antialias: true });
 document.body.appendChild(renderer.view);
 
-// create the root of the scene graph
+let loader = PIXI.loader;
+
 var stage = new PIXI.Container();
-
-stage.interactive = true;
-
-var bg = PIXI.Sprite.fromImage(image02);
-
-bg.anchor.x = 0.5;
-bg.anchor.y = 0.5;
-
-bg.position.x = renderer.width / 2;
-bg.position.y = renderer.height / 2;
-
-stage.addChild(bg);
 
 var container = new PIXI.Container();
 container.position.x = renderer.width / 2;
 container.position.y = renderer.height / 2;
 
-// add a bunch of sprites
+let bg, bgFront, thing;
 
-var bgFront = PIXI.Sprite.fromImage(image01);
-bgFront.anchor.x = 0.5;
-bgFront.anchor.y = 0.5;
+loader.add("first", image01).add("second", image02);
+loader.load((loader, resources) => {
+  bg = new PIXI.Sprite(resources.first.texture);
+  bg.anchor.x = 0.5;
+  bg.anchor.y = 0.5;
 
-container.addChild(bgFront);
+  bg.position.x = renderer.width / 2;
+  bg.position.y = renderer.height / 2;
 
-stage.addChild(container);
+  let windowAspect = window / height;
+  let imageAspect = bg.window / bg.height;
 
-// let's create a moving shape
-var thing = new PIXI.Graphics();
-stage.addChild(thing);
-thing.position.x = renderer.width / 2;
-thing.position.y = renderer.height / 2;
-thing.lineStyle(0);
+  // if (windowAspect > imageAspect) {
+  //   bg.width = width;
+  //   bg.height = height * imageAspect;
+  // } else {
+  //   bg.height = height;
+  // }
+  stage.addChild(bg);
 
-container.mask = thing;
+  bgFront = new PIXI.Sprite(resources.second.texture);
+  bgFront.anchor.x = 0.5;
+  bgFront.anchor.y = 0.5;
 
-var count = 0;
+  container.addChild(bgFront);
 
-animate();
+  stage.addChild(container);
 
-function animate() {
-  bg.rotation += 0.01;
-  bgFront.rotation -= 0.01;
-
-  count += 0.1;
-
-  thing.clear();
-
+  thing = new PIXI.Graphics();
+  stage.addChild(thing);
+  thing.lineStyle(0);
   thing.beginFill(0x8bc5ff, 0.4);
-  thing.moveTo(-120 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
-  thing.lineTo(-320 + Math.cos(count) * 20, 100 + Math.sin(count) * 20);
-  thing.lineTo(120 + Math.cos(count) * 20, -100 + Math.sin(count) * 20);
-  thing.lineTo(120 + Math.sin(count) * 20, 100 + Math.cos(count) * 20);
-  thing.lineTo(-120 + Math.cos(count) * 20, 100 + Math.sin(count) * 20);
-  thing.lineTo(-120 + Math.sin(count) * 20, -300 + Math.cos(count) * 20);
-  thing.lineTo(-320 + Math.sin(count) * 20, -100 + Math.cos(count) * 20);
-  thing.rotation = count * 0.1;
+  thing.moveTo(0, 0);
+  thing.lineTo(width, 0);
+  thing.lineTo(width, height * 0);
+  thing.lineTo(0, height * 0);
+  container.mask = thing;
 
   renderer.render(stage);
-  requestAnimationFrame(animate);
-}
+});
+
+$("body").on("click", () => {
+  let tl = new TimelineMax();
+  let obj = { a: 0 };
+  bgFront.position.y -= 100;
+  tl.to(obj, 1.8, {
+    a: 1,
+    ease: Power3.easeOut,
+    onUpdate: function () {
+      let middle = (obj.a * obj.a + obj.a) / 2;
+      thing.clear();
+      thing.beginFill(0x8bc5ff, 0.4);
+      thing.moveTo(0, 0);
+      thing.lineTo(width, 0);
+      thing.lineTo(width, height * obj.a * obj.a);
+      thing.lineTo(0, height * obj.a);
+
+      let rect =
+        "rect(" + height * middle + "px," + width + "px," + height + "px,0)";
+
+      let rect2 =
+        "rect(" + 0 + "px," + width + "px," + height * middle + "px,0)";
+
+      $(".one").css("clip", rect);
+      $(".two").css("clip", rect2);
+      renderer.render(stage);
+    },
+  })
+    .to(bg.position, 1.2, { y: "+=100" }, 0)
+    .to(bgFront.position, 1.2, { y: "+=100" }, 0)
+    .to(bgFront.scale, 3, { x: "+=0.4", y: "+=0.4" }, 0.8);
+});

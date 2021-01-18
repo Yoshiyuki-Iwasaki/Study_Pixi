@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "游明朝", YuMincho, "Hiragino Mincho ProN", Meiryo, sans-serif;
 }
 .nav {
   position: fixed;
@@ -14,4 +15,36 @@ a {
   display: block;
   height: 100%;
   width: 33.33%;
+}
+.two {
+  clip: rect(0, 0, 0, 0);
+}
+
+.one,
+.two {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  text-align: center;
+}
+
+.inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.title {
+  font-size: 80px;
+  color: #fff;
+  letter-spacing: 0.01rem;
+}
+
+.text {
+  font-size: 20px;
+  color: #fff;
+  letter-spacing: 0.01rem;
 }
